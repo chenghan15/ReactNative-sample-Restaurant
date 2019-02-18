@@ -34,7 +34,7 @@ export const addComments = (comments) => ({
 export const fetchDishes = () => (dispatch) => {
 
     dispatch(dishesLoading());
-
+    
     return fetch(baseUrl + 'dishes')
     .then(response => {
         if (response.ok) {
