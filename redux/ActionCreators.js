@@ -34,7 +34,7 @@ export const addComments = (comments) => ({
 export const fetchDishes = () => (dispatch) => {
 
     dispatch(dishesLoading());
-    
+
     return fetch(baseUrl + 'dishes')
     .then(response => {
         if (response.ok) {
@@ -140,4 +140,16 @@ export const leadersFailed = (errmess) => ({
 export const addLeaders = (leaders) => ({
     type: ActionTypes.ADD_LEADERS,
     payload: leaders
+});
+
+export const postFavorite = (dishId)  => (dispatch) => {
+
+    setTimeout(() => {
+        dispatch(addFavorite(dishId));
+    }, 2000);
+};
+
+export const addFavorite = (dishId) => ({
+    type: ActionTypes.ADD_FAVORITE,
+    payload: dishId
 });
