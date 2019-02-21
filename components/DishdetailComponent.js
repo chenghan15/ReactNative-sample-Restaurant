@@ -42,7 +42,7 @@ function RenderDish(props){
                     <Icon
                         raised
                         reverse
-                        name={ props.favorite ? 'comment' : 'comment-o'}
+                        name='comment'
                         type='font-awesome'
                         color='#f50'
                         onPress={() => props.onPressComment()}
