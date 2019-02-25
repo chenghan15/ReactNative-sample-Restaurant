@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import { Input, CheckBox, Button, Icon } from 'react-native-elements';
-import { SecureStore, Permissions, ImagePicker, Asset, ImageManipulator } from 'expo';
+import { SecureStore, Camera, Permissions, ImagePicker, Asset, ImageManipulator } from 'expo';
 import { createBottomTabNavigator } from 'react-navigation';
 import { baseUrl } from '../shared/baseUrl';
 
@@ -143,11 +143,31 @@ class RegisterTab extends Component {
             });
             if (!capturedImage.cancelled) {
                 console.log(capturedImage);
+                // this.setState({ imageUrl: capturedImage.uri });
                 this.processImage(capturedImage.uri);
             }
         }
 
     }
+
+    getImageFromGallery = async () => {
+        const cameraPermission = await Permissions.askAsync(Permissions.CAMERA);
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+        if (cameraPermission.status === 'granted' && cameraRollPermission.status === 'granted') {
+            let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            });
+            console.log(result);
+        
+            if (!result.cancelled) {
+                // this.setState({ imageUrl: result.uri });
+                this.processImage(result.uri);
+            }
+        }
+
+      };     
 
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulate(
@@ -195,6 +215,10 @@ class RegisterTab extends Component {
                         title="Camera"
                         onPress={this.getImageFromCamera}
                         />
+                    <Button
+                        title="Gallery"
+                        onPress={this.getImageFromGallery}
+                        />                        
                 </View>
                 <Input
                     placeholder="Username"
