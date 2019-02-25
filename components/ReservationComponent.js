@@ -3,7 +3,7 @@ import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Aler
 import { Card } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable';
-import { Permissions, Notifications } from 'expo';
+import { Permissions, Notifications, Calendar } from 'expo';
 
 class Reservation extends Component {
 
@@ -51,6 +51,17 @@ class Reservation extends Component {
         return permission;
     }
 
+    async obtainCalendarPermission(){
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to use Calendar');
+            }
+        }
+        return permission;        
+    }
+
     async presentLocalNotification(date) {
         await this.obtainNotificationPermission();
         Notifications.presentLocalNotificationAsync({
@@ -64,6 +75,22 @@ class Reservation extends Component {
                 vibrate: true,
                 color: '#512DA8'
             }
+        });
+    }
+
+    async addReservationToCalendar(date) {
+        await this.obtainCalendarPermission();
+
+        let currDate = new Date(date);
+        let timestamp = currDate.getMilliseconds();
+        timestamp += 2*60*60*1000;
+
+        Calendar.createEventAsync(Calendar.DEFAULT, {
+            title: 'Con Fusion Table Reservation',
+            startDate: currDate,
+            endDate: new Date(timestamp) ,
+            timeZone: 'Asia/Hong_Kong',
+            location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
         });
     }
 
@@ -140,6 +167,7 @@ class Reservation extends Component {
                                                             text: 'OK',
                                                             onPress: () =>{
                                                                 this.presentLocalNotification(this.state.date);
+                                                                this.addReservationToCalendar(this.state.date);
                                                                 this.toggleModal(); 
                                                                 this.resetForm();
                                                             }
